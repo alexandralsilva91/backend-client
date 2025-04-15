@@ -46,7 +46,7 @@ function handleFilterBtnClick() {
         brand: brandID
     }).toString();
 
-    const url = `${BACKEND_PATH}/api/products?${queryParams}`;
+    const url = `${BACKEND_PATH}/api/products?${queryParams}&limit=100`; //o limit é p aparecerem os produtos até 100 no browser
 
     console.log(url);
 
@@ -59,11 +59,14 @@ function handleFilterBtnClick() {
                 let productElement = `<div class="col-md-4 mb-4">
                         <div class="card">
                             <div class="card-body">
+                                <img src="${product.image_url}" 
+                                class="card-img-top" 
+                                alt= "${product.title}" />
                                 <h5 class="card-title">${product.title}</h5>
                                 <p class="card-text">${product.brand}, ${product.type}</p>
                                 <p class="card-text">${product.price}</p>
                                 <p class="card-text"><small>${product.description}</small></p>
-                                <button data-id="${product.id}" class="btn btn-danger delete-btn">Delete ${product.id}</button>
+                                <button data-id="${product.id}" class="btn btn-danger delete-btn">Delete</button>
                             </div>
                         </div>
                     </div>`;
@@ -81,24 +84,25 @@ function handleFilterBtnClick() {
 }
 
 function handleDeleteProduct(event) {
-    const productID = event.target.dataset.id;
+    if(confirm("Tem a certeza que pretende apagar o produto?")){
+        const productID = event.target.dataset.id;
 
-    const requestOptions = {
-        method: "DELETE",
-        redirect: "follow"
-    };
-
-    fetch(`${BACKEND_PATH}/api/products/${productID}`, requestOptions)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Error deleting product");
-            }
-            return response.json();
-        })
-        .then(() => {
-            event.target.parentElement.parentElement.parentElement.remove();
-        }).catch((error) => console.error(error));
-}
-
-
+        const requestOptions = {
+            method: "DELETE",
+            redirect: "follow"
+        };
+    
+        fetch(`${BACKEND_PATH}/api/products/${productID}`, requestOptions)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error deleting product");
+                }
+                return response.json();
+            })
+            .then(() => {
+                event.target.parentElement.parentElement.parentElement.remove();
+            }).catch((error) => console.error(error));
+    }
+    }
+    
 handleFilterBtnClick();
