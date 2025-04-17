@@ -37,6 +37,38 @@ function populateFiltersOptions() {
 
 populateFiltersOptions();
 
+const loginForm = document.getElementById("loginForm");
+
+async function login(email, password) {
+    try {
+        const response = fetch(`${BACKEND_PATH}/auth/users/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+            body: JSON.stringify ({ email, password})
+        });
+
+
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    
+    try{
+        await login (email, password);
+        console.log("Logged in successfully!")
+    } catch (error) {
+        console.log("login failed: ", error)
+    }
+})
+
+
 function handleFilterBtnClick() {
     const typeID = document.getElementById("type").value;
     const brandID = document.getElementById("brand").value;
@@ -84,14 +116,14 @@ function handleFilterBtnClick() {
 }
 
 function handleDeleteProduct(event) {
-    if(confirm("Tem a certeza que pretende apagar o produto?")){
+    if (confirm("Tem a certeza que pretende apagar o produto?")) {
         const productID = event.target.dataset.id;
 
         const requestOptions = {
             method: "DELETE",
             redirect: "follow"
         };
-    
+
         fetch(`${BACKEND_PATH}/api/products/${productID}`, requestOptions)
             .then((response) => {
                 if (!response.ok) {
@@ -103,6 +135,6 @@ function handleDeleteProduct(event) {
                 event.target.parentElement.parentElement.parentElement.remove();
             }).catch((error) => console.error(error));
     }
-    }
-    
+}
+
 handleFilterBtnClick();
